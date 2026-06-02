@@ -44,6 +44,19 @@ bun run dev:ml       # ML worker only
 bun run dev          # Web only
 ```
 
+### Dev server errors (`ENOENT` / `_buildManifest.js.tmp`)
+
+This happens when **production `next build` output** is mixed with **`next dev`** (e.g. running `bun run build` in `apps/web` while `bun start` is running). It is not an app bug.
+
+**Fix:** stop the dev server, then:
+
+```bash
+bun run clean:web
+bun start
+```
+
+Use `next build` only when you want to verify a production build — not during normal labeling/dev work.
+
 ## Environment variables
 
 | Variable | Where | Purpose |
@@ -64,13 +77,17 @@ See the grill session outcomes in project docs:
 - Training gate: 100 positives + 200 empty chips
 - Branch C later: `suppressed` flag for bathy/swell
 
-## Seed import
+## Start labeling
+
+See **[docs/LABELING.md](docs/LABELING.md)** for the full workflow.
 
 ```bash
-cd services/ml
-source .venv/bin/activate
-python scripts/import_seeds.py --file your_spots.geojson
+# Import sample spots (5 famous breaks)
+cd services/ml && source .venv/bin/activate
+python scripts/import_seeds.py --file ../../data/sample-seeds.geojson
 ```
+
+Then open `/label/review`, `/label/empty`, and `/label/explore` with `bun start` running.
 
 ## Deploying to Vercel (later)
 

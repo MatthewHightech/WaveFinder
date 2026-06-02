@@ -8,10 +8,13 @@ from dataclasses import dataclass
 
 from pyproj import Transformer
 from shapely.geometry import box
-from shapely.ops import transform
 
 from wavefinder.config import settings
-from wavefinder.geo.coastline import corridor_union, load_coastline_corridor
+from wavefinder.geo.coastline import (
+    corridor_intersects_box,
+    load_coastline_corridor,
+    point_in_wcna,
+)
 
 
 @dataclass
@@ -46,8 +49,7 @@ def enumerate_coastal_chips(
     Grid chips over viewport; keep those intersecting the buffered coastline corridor.
     """
     corridor_gdf = load_coastline_corridor(west, south, east, north)
-    corridor = corridor_union(corridor_gdf)
-    if corridor is None or corridor.is_empty:
+    if corridor_gdf.empty:
         return []
 
     size_m = settings.chip_size_m
@@ -65,7 +67,7 @@ def enumerate_coastal_chips(
         lon = west
         while lon < east:
             chip_box = box(lon, lat, lon + d_lon, lat + d_lat)
-            if chip_box.intersects(corridor):
+            if corridor_intersects_box(corridor_gdf, chip_box):
                 chips.append(
                     ChipSpec(
                         chip_key=_chip_key(lon, lat, lon + d_lon, lat + d_lat),
@@ -89,12 +91,34 @@ def shore_span_km_approx(
 ) -> float:
     """
     Straight-line span along shore (v1 approximation): diagonal of viewport in km.
-    Refine later with coastline polyline length.
     """
     to_m = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True)
     x0, y0 = to_m.transform(west, south)
     x1, y1 = to_m.transform(east, north)
     return math.hypot(x1 - x0, y1 - y0) / 1000.0
+
+
+def chip_at_point(lat: float, lon: float) -> ChipSpec:
+    """Center a chip on a lat/lon (e.g. known surf spot)."""
+    half_m = settings.chip_size_m / 2.0
+    d_lat = _meters_to_deg_lat(half_m)
+    d_lon = _meters_to_deg_lon(half_m, lat)
+    west, east = lon - d_lon, lon + d_lon
+    south, north = lat - d_lat, lat + d_lat
+    return ChipSpec(
+        chip_key=_chip_key(west, south, east, north),
+        west=west,
+        south=south,
+        east=east,
+        north=north,
+    )
+
+
+def chip_is_coastal(chip: ChipSpec) -> bool:
+    """True if chip intersects the buffered shoreline corridor."""
+    corridor_gdf = load_coastline_corridor(chip.west, chip.south, chip.east, chip.north)
+    chip_box = box(chip.west, chip.south, chip.east, chip.north)
+    return corridor_intersects_box(corridor_gdf, chip_box)
 
 
 def validate_scan_extent(

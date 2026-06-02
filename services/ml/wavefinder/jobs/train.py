@@ -101,10 +101,17 @@ def _export_yolo_dataset() -> Path | None:
         (export / "images" / split).mkdir(parents=True, exist_ok=True)
         (export / "labels" / split).mkdir(parents=True, exist_ok=True)
 
-    # Simple 80/20 split
-    for i, row in enumerate(pos):
+    # Group labels by chip (multiple bboxes per chip → one YOLO .txt with many lines)
+    by_chip: dict[str, dict] = {}
+    for row in pos:
+        key = row["chip_key"]
+        if key not in by_chip:
+            by_chip[key] = {"chip_key": key, "bounds": row["bounds"], "bboxes": []}
+        by_chip[key]["bboxes"].append(row["bbox"])
+
+    for i, chip_row in enumerate(by_chip.values()):
         split = "train" if i % 5 else "val"
-        _copy_chip_row(row, export, split, has_box=True)
+        _copy_chip_row(chip_row, export, split, has_box=True)
 
     with get_conn() as conn:
         empties = conn.execute(
@@ -143,13 +150,15 @@ def _copy_chip_row(row: dict, export: Path, split: str, has_box: bool) -> None:
     shutil.copy(src, dst_img)
 
     dst_lbl = export / "labels" / split / f"{chip.chip_key}.txt"
-    if has_box and row.get("bbox"):
-        b = row["bbox"]
-        # YOLO normalized cx,cy,w,h
-        cx = (b["x"] + b["width"] / 2) / settings.chip_size_px
-        cy = (b["y"] + b["height"] / 2) / settings.chip_size_px
-        w = b["width"] / settings.chip_size_px
-        h = b["height"] / settings.chip_size_px
-        dst_lbl.write_text(f"0 {cx:.6f} {cy:.6f} {w:.6f} {h:.6f}\n")
+    boxes = row.get("bboxes") or ([row["bbox"]] if row.get("bbox") else [])
+    if has_box and boxes:
+        lines = []
+        for b in boxes:
+            cx = (b["x"] + b["width"] / 2) / settings.chip_size_px
+            cy = (b["y"] + b["height"] / 2) / settings.chip_size_px
+            w = b["width"] / settings.chip_size_px
+            h = b["height"] / settings.chip_size_px
+            lines.append(f"0 {cx:.6f} {cy:.6f} {w:.6f} {h:.6f}")
+        dst_lbl.write_text("\n".join(lines) + "\n")
     else:
         dst_lbl.write_text("")

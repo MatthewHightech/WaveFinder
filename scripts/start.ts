@@ -39,11 +39,20 @@ function loadEnvFile(path: string): Record<string, string> {
 }
 
 function mergedEnv(): Record<string, string> {
-  return {
-    ...process.env,
+  const web = {
     ...loadEnvFile(webEnvPath),
     ...loadEnvFile(webEnvLocalPath),
-    ...loadEnvFile(join(mlDir, ".env")),
+  };
+  const ml = loadEnvFile(join(mlDir, ".env"));
+  const mapbox =
+    ml.MAPBOX_ACCESS_TOKEN ??
+    web.MAPBOX_ACCESS_TOKEN ??
+    web.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
+  return {
+    ...process.env,
+    ...web,
+    ...ml,
+    ...(mapbox ? { MAPBOX_ACCESS_TOKEN: mapbox } : {}),
   };
 }
 

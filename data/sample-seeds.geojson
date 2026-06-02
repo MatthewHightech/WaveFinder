@@ -1,0 +1,30 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Mavericks", "source": "sample" },
+      "geometry": { "type": "Point", "coordinates": [-122.4942, 37.4886] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Steamer Lane", "source": "sample" },
+      "geometry": { "type": "Point", "coordinates": [-122.0264, 36.9517] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Rincon", "source": "sample" },
+      "geometry": { "type": "Point", "coordinates": [-119.375, 34.372] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Pipeline", "source": "sample" },
+      "geometry": { "type": "Point", "coordinates": [-158.051, 21.664] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Trestles", "source": "sample" },
+      "geometry": { "type": "Point", "coordinates": [-117.59, 33.384] }
+    }
+  ]
+}

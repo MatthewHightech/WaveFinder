@@ -18,8 +18,10 @@ from wavefinder.config import settings
 from wavefinder.geo.chips import enumerate_coastal_chips, validate_scan_extent
 from wavefinder.jobs.scan import run_scan_job
 from wavefinder.jobs.train import run_train_job
+from wavefinder.routes.chips import router as chips_router
 
 app = FastAPI(title="WaveFinder ML", version=__version__)
+app.include_router(chips_router)
 _executor = ThreadPoolExecutor(max_workers=1)
 
 

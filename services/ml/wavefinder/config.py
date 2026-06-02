@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     # Planetary Computer STAC (no key required for basic use)
     stac_url: str = "https://planetarycomputer.microsoft.com/api/stac/v1"
 
+    # Optional fallback for labeling chips (copy from apps/web/.env)
+    mapbox_access_token: str | None = None
+
     @property
     def chip_size_m(self) -> float:
         return self.chip_size_px * self.gsd_m
