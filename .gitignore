@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# Env
+.env
+.env.local
+.env.*.local
+apps/web/.env.local
+services/ml/.env
+
+# Python
+services/ml/.venv/
+services/ml/__pycache__/
+services/ml/**/__pycache__/
+*.py[cod]
+.Python
+*.egg-info/
+.eggs/
+
+# ML artifacts
+services/ml/data/
+services/ml/models/
+services/ml/runs/
+
+# DB
+packages/db/drizzle/meta/_journal.json.bak
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# Vercel
+.vercel
+
+
+# Cursor
+.cursor/

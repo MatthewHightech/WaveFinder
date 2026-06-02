@@ -1,0 +1,33 @@
+[project]
+name = "wavefinder-ml"
+version = "0.1.0"
+description = "WaveFinder ML worker — coastline tiling, Sentinel-2 chips, YOLO train/infer"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.32.0",
+  "pydantic>=2.10.0",
+  "pydantic-settings>=2.6.0",
+  "psycopg[binary]>=3.2.0",
+  "httpx>=0.28.0",
+  "numpy>=2.0.0",
+  "shapely>=2.0.0",
+  "pyproj>=3.7.0",
+  "geopandas>=1.0.0",
+  "rasterio>=1.4.0",
+  "stackstac>=0.5.0",
+  "ultralytics>=8.3.0",
+  "python-dotenv>=1.0.0",
+  "pillow>=11.0.0",
+  "pystac-client>=0.8.0",
+]
+
+[project.optional-dependencies]
+dev = ["ruff>=0.8.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["wavefinder"]
