@@ -13,7 +13,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen antialiased">
-        <header className="border-b border-slate-800 px-4 py-3 flex items-center gap-6">
+        <header className="flex h-[var(--header-height)] shrink-0 items-center gap-6 border-b border-slate-800 px-4">
           <Link href="/" className="font-semibold text-teal-400 tracking-tight">
             WaveFinder
           </Link>

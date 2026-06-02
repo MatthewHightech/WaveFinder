@@ -113,7 +113,7 @@ export function WaveMap({
   }
 
   return (
-    <div className="relative h-[calc(100vh-56px)] w-full">
+    <div className="absolute inset-0">
       <Map
         ref={mapRef}
         mapboxAccessToken={MAPBOX_TOKEN}

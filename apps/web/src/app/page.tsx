@@ -33,9 +33,9 @@ export default function FinderPage() {
   }, [loadPins]);
 
   return (
-    <>
+    <div className="relative h-[calc(100vh-var(--header-height))] w-full overflow-hidden">
       <WaveMap pins={pins} onBoundsChange={onBoundsChange} />
       <ScanPanel bounds={bounds} onScanComplete={() => loadPins(bounds ?? undefined)} />
-    </>
+    </div>
   );
 }

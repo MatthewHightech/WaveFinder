@@ -22,32 +22,27 @@ Discover potential surf breaks from **Sentinel-2** imagery using **YOLO** object
 ## Quick start
 
 ```bash
-# 1. Install JS deps
+# 1. One-time setup
 bun install
+cp .env.example apps/web/.env
+# Edit apps/web/.env — set NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
 
-# 2. Start PostGIS
-bun run docker:up
+cd services/ml && python3 -m venv .venv && source .venv/bin/activate && pip install -e .
 
-# 3. Migrate database
-cp .env.example apps/web/.env.local
-# Edit apps/web/.env.local — set NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
-
-export DATABASE_URL=postgresql://wavefinder:wavefinder@localhost:5432/wavefinder
-bun run db:migrate
-
-# 4. Python ML worker
-cd services/ml
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
-cp ../../.env.example .env   # optional; defaults work locally
-uvicorn wavefinder.main:app --reload --port 8000
-
-# 5. Web app (new terminal, repo root)
-bun run dev
+# 2. Start everything (PostGIS + migrations + ML worker + web)
+cd ../..   # repo root
+bun start
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Press `Ctrl+C` to stop the ML worker and web app (the database container keeps running). Use `bun run stop` to stop PostGIS too.
+
+### Start individual services
+
+```bash
+bun run docker:up    # PostGIS only
+bun run dev:ml       # ML worker only
+bun run dev          # Web only
+```
 
 ## Environment variables
 

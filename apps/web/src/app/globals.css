@@ -6,6 +6,7 @@
   --foreground: #e8edf5;
   --accent: #2dd4bf;
   --muted: #64748b;
+  --header-height: 3.5rem;
 }
 
 body {

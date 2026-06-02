@@ -6,8 +6,10 @@
     "packages/*"
   ],
   "scripts": {
+    "start": "bun run scripts/start.ts",
     "dev": "bun run --filter @wavefinder/web dev",
     "dev:ml": "cd services/ml && python -m uvicorn wavefinder.main:app --reload --port 8000",
+    "stop": "docker compose down",
     "db:generate": "bun run --filter @wavefinder/db generate",
     "db:migrate": "bun run --filter @wavefinder/db migrate",
     "db:studio": "bun run --filter @wavefinder/db studio",
